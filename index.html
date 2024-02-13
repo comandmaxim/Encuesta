@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Examen de Normas de Tránsito</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 20px;
+      background-color: #f7f7f7;
+    }
+    
+    #inicio-examen {
+      background-image: linear-gradient(to right, #3498db, #2980b9);
+      padding: 20px;
+      color: white;
+      text-align: center;
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
+
+    #inicio-examen h2 {
+      margin-bottom: 10px;
+    }
+
+    #questions-container {
+      display: none;
+      border-radius: 10px;
+    }
+
+    .question {
+      background-color: #ffffff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+    }
+
+    .answer-container {
+      margin-bottom: 10px;
+    }
+
+    label {
+      display: block;
+      background-color: #ecf0f1;
+      padding: 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    input {
+      margin-right: 5px;
+    }
+
+    input[type="radio"]:checked+label {
+      background-color: #3498db;
+      color: white;
+    }
+
+    #next-button,
+    #finish-button {
+      background-color: #3498db;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: background-color 0.3s ease;
+    }
+
+    #next-button:hover,
+    #finish-button:hover {
+      background-color: #2980b9;
+    }
+
+    #resultado {
+      background-color: #ffffff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+<div id="inicio-examen">
+  <h2>Examen de Normas de Tránsito de la Municipalidad Provincial de San Roman</h2>
+  <p>Bienvenido al examen de evaluación para obtener tu licencia. Este test evaluará tus conocimientos en normativas de tráfico, señales de tránsito y habilidades prácticas de conducción. Asegúrate de leer cada pregunta cuidadosamente antes de responder.</p>
+  <p>Suerte en tu examen.</p>
+  <button onclick="comenzarExamen()">Comenzar Examen</button>
+</div>
+
+<div id="questions-container"></div>
+<div id="resultado"></div>
+
+<button id="next-button" onclick="nextQuestion()" style="display:none;">Siguiente Pregunta</button>
+<button id="finish-button" onclick="finalizarExamen()" style="display:none;">Finalizar Examen</button>
+
+<script>
+const preguntas = [
+  {
+    pregunta: "1) El color ámbar o amarillo del semáforo significa que:",
+    opciones: {
+      a: "Los vehículos deben avanzar.",
+      b: "Los vehículos deben detenerse.",
+      c: "Los vehículos deben acelerar la marcha.",
+      d: "Los vehículos deben detenerse antes de ingresar a la intersección si su velocidad y ubicación lo permiten; de lo contrario, deberán cruzar y despejar la intersección."
+    },
+    respuestaCorrecta: "d"
+  },
+  {
+    pregunta: "2) ¿Qué indica una flecha verde en un semáforo vehicular?",
+    opciones: {
+      a: "Se puede continuar con precaución únicamente en la dirección de la flecha y desde el carril que esta flecha controla.",
+      b: "No está permitida la circulación en el sentido que indica la flecha.",
+      c: "Se debe respetar únicamente la luz circular.",
+      d: "Ninguna de las alternativas es correcta."
+    },
+    respuestaCorrecta: "a"
+  },
+  {
+    pregunta: "3) ¿Cuál de las siguientes afirmaciones es correcta?",
+    opciones: {
+      a: "El conductor debe respetar los límites máximos y mínimos de velocidad establecidos.",
+      b: "El conductor debe respetar únicamente los límites máximos de velocidad, pues no existen límites mínimos.",
+      c: "El conductor puede conducir a la velocidad que desee, siempre que lo haga de manera correcta.",
+      d: "Ninguna de las alternativas es correcta."
+    },
+    respuestaCorrecta: "a"
+  },
+  {
+    pregunta: "4) ¿En caso de accidentes, el SOAT cubre los daños que sufren?",
+    opciones: {
+      a: "Solo los ocupantes del vehículo.",
+      b: "Los ocupantes y terceros no ocupantes del vehículo.",
+      c: "Solo terceros afectados.",
+      d: "Solo el conductor del vehículo."
+    },
+    respuestaCorrecta: "b"
+  },
+  {
+    pregunta: "5) ¿Qué significa un triángulo rojo de seguridad colocado en la calzada?",
+    opciones: {
+      a: "La presencia de un vehículo inmovilizado en la vía pública por alguna circunstancia.",
+      b: "Zona de obras por alguna circunstancia.",
+      c: "Que el vehículo que lo enfrenta debe detenerse.",
+      d: "a y c son correctas."
+    },
+    respuestaCorrecta: "a"
+  },
+  {
+    pregunta: "6) Se entiende por carril a la:",
+    opciones: {
+      a: "Parte de la vía destinada a la circulación de peatones.",
+      b: "Parte de la calzada destinada al tránsito de una fila de vehículos.",
+      c: "Vía rural destinada a la circulación de peatones y animales.",
+      d: "Todas las alternativas son correctas."
+    },
+    respuestaCorrecta: "b"
+  },
+  {
+    pregunta: "7) ¿Qué debe hacer si se aproxima a una intersección sin semáforo y sin presencia de la Policía de Tránsito, y observa que un peatón está cruzando por el paso peatonal?",
+    opciones: {
+      a: "Disminuir la velocidad y pasar con cuidado.",
+      b: "Detener el vehículo y ceder el paso al peatón.",
+      c: "Continuar porque usted tiene la prioridad.",
+      d: "Incrementar la velocidad para adelantar el cruce del peatón."
+    },
+    respuestaCorrecta: "b"
+  },
+  {
+    pregunta: "8) La acción correcta al abastecer de combustible su vehículo, es:",
+    opciones: {
+      a: "Asegurarse de que todos los pasajeros permanezcan a bordo del vehículo.",
+      b: "Abstenerse de fumar tanto el conductor como sus acompañantes.",
+      c: "Mantener encendido el motor del vehículo.",
+      d: "Todas las alternativas son correctas."
+    },
+    respuestaCorrecta: "b"
+  },
+  {
+    pregunta: "9) ¿Después de qué tiempo de haber cometido la misma infracción se llama reincidencia y es sancionada con el doble de la multa establecida?",
+    opciones: {
+      a: "06 meses.",
+      b: "12 meses.",
+      c: "24 meses .",
+      d: "35 meses."
+    },
+    respuestaCorrecta: "b"
+  },
+  {
+    pregunta: "10) El conductor que en una vía urbana va a girar a la izquierda, a la derecha o en U debe hacer la señal respectiva con la luz direccional, por lo menos:",
+    opciones: {
+      a: "2 segundos antes de realizar la maniobra.",
+      b: "1 metro antes de realizar la maniobra.",
+      c: "20 metros antes de realizar la maniobra.",
+      d: "3 metros antes de realizar la maniobra."
+    },
+    respuestaCorrecta: "c"
+  },
+];
+
+const container = document.getElementById('questions-container');
+const resultadoContainer = document.getElementById('resultado');
+let currentQuestionIndex = -1;
+let correctas = 0;
+let incorrectas = 0;
+let preguntasRespondidas = 0;
+
+function comenzarExamen() {
+  document.getElementById('inicio-examen').style.display = 'none';
+  currentQuestionIndex++;
+  showQuestion(currentQuestionIndex);
+}
+
+function showQuestion(index) {
+  container.innerHTML = '';
+  const pregunta = preguntas[index];
+  const divPregunta = document.createElement('div');
+  divPregunta.innerHTML = `<p>${pregunta.pregunta}</p>`;
+
+  for (const opcion in pregunta.opciones) {
+    const input = document.createElement('input');
+    input.type = 'radio';
+    input.name = `pregunta${index}`;
+    input.value = opcion;
+    divPregunta.appendChild(input);
+
+    const label = document.createElement('label');
+    label.innerHTML = `${opcion}: ${pregunta.opciones[opcion]}<br>`;
+    divPregunta.appendChild(label);
+  }
+
+  container.appendChild(divPregunta);
+  container.style.display = 'block';
+
+  document.getElementById('next-button').style.display = 'block';
+}
+
+function nextQuestion() {
+  const respuestasUsuario = obtenerRespuestasUsuario();
+  const resultadoPregunta = verificarRespuestas(respuestasUsuario);
+
+  preguntasRespondidas++;
+
+  if (resultadoPregunta === "correcta") {
+    correctas++;
+  } else {
+    incorrectas++;
+  }
+
+  currentQuestionIndex++;
+
+  if (currentQuestionIndex < preguntas.length) {
+    showQuestion(currentQuestionIndex);
+  } else {
+    document.getElementById('finish-button').style.display = 'block';
+    document.getElementById('next-button').style.display = 'none';
+  }
+}
+
+function obtenerRespuestasUsuario() {
+  const respuestas = [];
+  preguntas.forEach((pregunta, index) => {
+    const seleccionado = document.querySelector(`input[name="pregunta${index}"]:checked`);
+    respuestas.push(seleccionado ? seleccionado.value : null);
+  });
+  return respuestas;
+}
+
+function verificarRespuestas(respuestasUsuario) {
+  const preguntaActual = preguntas[currentQuestionIndex];
+  const respuestaUsuario = respuestasUsuario[currentQuestionIndex];
+
+  if (respuestaUsuario === preguntaActual.respuestaCorrecta) {
+    return "correcta";
+  } else {
+    return "incorrecta";
+  }
+}
+
+function mostrarResultados() {
+  const respuestasUsuario = obtenerRespuestasUsuario();
+
+  resultadoContainer.innerHTML = `<p>Respuestas correctas: ${correctas}</p>`;
+  resultadoContainer.innerHTML += `<p>Respuestas incorrectas: ${incorrectas}</p>`;
+  resultadoContainer.innerHTML += `<p>Preguntas respondidas: ${preguntasRespondidas} de ${preguntas.length}</p>`;
+  
+  if (correctas >= 5) {
+    resultadoContainer.innerHTML += `<p>Resultado: Aprobado</p>`;
+  } else {
+    resultadoContainer.innerHTML += `<p>Resultado: Reprobado</p>`;
+  }
+}
+
+function finalizarExamen() {
+  mostrarResultados();
+}
+</script>
+
+</body>
+</html>
